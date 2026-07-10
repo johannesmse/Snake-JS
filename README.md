@@ -8,13 +8,13 @@ When this is deployed, it is running in a minimal nginx Dockerfile (just 2 lines
 You can run this locally as well, with `docker`:
 
 ```bash
-docker build --tag johannes . && docker run -it -p 8000:80 --name johannes --rm johannes
+docker build --tag snake-js . && docker run -it -p 8000:80 --name snake-js --rm snake-js
 ```
 
 Or with `podman`:
 
 ```bash
-podman build --tag johannes . && podman run -it -p 8000:80 --name johannes --rm johannes
+podman build --tag snake-js . && podman run -it -p 8000:80 --name snake-js --rm snake-js
 ```
 
 Open in the browser:
