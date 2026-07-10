@@ -2,7 +2,7 @@
 <canvas width=800 height=600 id="my_canvas">
 </canvas>
 <script>
-
+const snake_size = 20
 let x = 0;
 let y = 0;
 
@@ -15,7 +15,7 @@ function draw(){
   ctx.fillStyle = "#ffffff";
   ctx.fill(); // Render the path
   ctx.beginPath(); // Start a new path
-  ctx.rect(x, y, 20, 20); // Add a rectangle to the current path
+  ctx.rect(x, y, snake_size, snake_size); // Add a rectangle to the current path
   ctx.fillStyle = "#000000";
   ctx.fill(); // Render the path
 }
@@ -23,16 +23,16 @@ function draw(){
 function keydown(event) {
   console.log(event);
   if (event.key === "w") {
-    y -= 100;
+    y -= snake_size;
   }
   if (event.key === "s") {
-    y += 100;
+    y += snake_size;
   }
   if (event.key === "a") {
-    x -= 100;
+    x -= snake_size;
   }
   if (event.key === "d") {
-    x += 100;
+    x += snake_size;
   }
 }
 
