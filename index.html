@@ -5,6 +5,13 @@
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
 const SNAKE_SIZE = 20;
+const START_LENGTH = 10;
+const VALID_TURNS = {
+  "up" : ["left", "right"],
+  "down" : ["left", "right"],
+  "left"  : ["up", "down"],
+  "right" : ["up", "down"]
+};
 
 const canvas = document.getElementById("my_canvas");
 canvas.width = CANVAS_WIDTH;
@@ -13,6 +20,7 @@ canvas.height = CANVAS_HEIGHT;
 const ctx = canvas.getContext("2d");
 
 let direction = "right";
+let next_direction = ""
 let snake = [[200, 200]];
 
 function draw(){
@@ -53,6 +61,11 @@ function initialize_body_parts(n){
 
 function update_game(){
   move_snake();
+  wrap_snake();
+
+  if (collision_check()){
+    reset_snake();
+  }
 }
 
 function move_snake(){
@@ -63,19 +76,25 @@ function move_snake(){
   }
 
   // Move head
-  if (direction === "up") {
-    snake[0][1] -= SNAKE_SIZE;
-  }
-  else if (direction === "down") {
-    snake[0][1] += SNAKE_SIZE;
-  }
-  else if (direction === "left") {
-    snake[0][0] -= SNAKE_SIZE;
-  }
-  else if (direction === "right") {
-    snake[0][0] += SNAKE_SIZE;
+  if (VALID_TURNS[direction].includes(next_direction)){
+    direction = next_direction;
   }
 
+  if (direction === "up"){
+    snake[0][1] -= SNAKE_SIZE;
+  }
+  else if (direction === "down"){
+    snake[0][1] += SNAKE_SIZE;
+  }
+  else if (direction === "left"){
+    snake[0][0] -= SNAKE_SIZE;
+  }
+  else if (direction === "right"){
+    snake[0][0] += SNAKE_SIZE;
+  }
+}
+
+function wrap_snake(){
   // Wrap around game window
   const [head_x, head_y] = snake[0];
 
@@ -93,25 +112,42 @@ function move_snake(){
   }
 }
 
+function collision_check(){
+  const [head_x, head_y] = snake[0];
+
+  for (let i = 1; i < snake.length; i++){
+    if (head_x === snake[i][0] && head_y === snake[i][1]){
+      return true;
+    }
+  }
+  return false;
+}
+
+function reset_snake(){
+  snake = [[200, 200]];
+  direction = "right";
+  initialize_body_parts(START_LENGTH);
+}
+
 function keydown(event) {
   console.log(event);
   if (event.key === "w") {
-    direction = "up";
+    next_direction = "up";
   }
   if (event.key === "s") {
-    direction = "down";
+    next_direction = "down";
   }
   if (event.key === "a") {
-    direction = "left";
+    next_direction = "left";
   }
   if (event.key === "d") {
-    direction = "right";
+    next_direction = "right";
   }
 }
 
-initialize_body_parts(10)
-setInterval(draw, 150);
-setInterval(update_game, 150);
+initialize_body_parts(START_LENGTH);
+setInterval(draw, 70);
+setInterval(update_game, 70);
 addEventListener("keydown", keydown);
 
 </script>
