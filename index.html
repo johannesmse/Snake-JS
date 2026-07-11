@@ -14,7 +14,7 @@ function random_grid_position(grid_size){
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
 const SNAKE_SIZE = 20;
-const START_LENGTH = 10;
+const START_LENGTH = 4;
 const VALID_TURNS = {
   "up" : ["left", "right"],
   "down" : ["left", "right"],
@@ -28,7 +28,7 @@ canvas.height = CANVAS_HEIGHT;
 
 const ctx = canvas.getContext("2d");
 
-const food = [random_grid_position(CANVAS_WIDTH), random_grid_position(CANVAS_HEIGHT)];
+const food = [[random_grid_position(CANVAS_WIDTH), random_grid_position(CANVAS_HEIGHT)], [random_grid_position(CANVAS_WIDTH), random_grid_position(CANVAS_HEIGHT)]];
 const input_queue = [];
 const input_queue_max_length = 2;
 let direction = "right";
@@ -66,7 +66,10 @@ function draw_snake(){
 
 function draw_food(){
   ctx.fillStyle = "blue";
-  ctx.fillRect(food[0], food[1], SNAKE_SIZE, SNAKE_SIZE); 
+  ctx.fillRect(food[0][0], food[0][1], SNAKE_SIZE, SNAKE_SIZE); 
+
+  ctx.fillStyle = "purple";
+  ctx.fillRect(food[1][0], food[1][1], SNAKE_SIZE, SNAKE_SIZE); 
 }
 
 function initialize_body_parts(n){
@@ -84,9 +87,10 @@ function update_game(){
   if (collision_check()){
     reset_snake();
   }
-  else if (food_check()){
-    add_body_queue += 1;
-    respawn_food();
+  const food_value = food_check();
+  if (food_value === 1 || food_value === 3){
+    add_body_queue += food_value;
+    respawn_food(food_value);
   }
 }
 
@@ -161,7 +165,15 @@ function collision_check(){
 }
 
 function food_check(){
-  return snake[0][0] === food[0] && snake[0][1] === food[1];
+  if (snake[0][0] === food[0][0] && snake[0][1] === food[0][1]){
+    return 1;
+  }
+  else if (snake[0][0] === food[1][0] && snake[0][1] === food[1][1]){
+    return 3;
+  }
+  else{
+    return 0;
+  }
 }
 
 function reset_snake(){
@@ -171,9 +183,16 @@ function reset_snake(){
   initialize_body_parts(START_LENGTH);
 }
 
-function respawn_food(){
-  food[0] = random_grid_position(CANVAS_WIDTH);
-  food[1] = random_grid_position(CANVAS_HEIGHT);
+function respawn_food(food_value){
+  if (food_value === 1){
+    food[0][0] = random_grid_position(CANVAS_WIDTH);
+    food[0][1] = random_grid_position(CANVAS_HEIGHT);
+  }
+  else{
+    food[1][0] = random_grid_position(CANVAS_WIDTH);
+    food[1][1] = random_grid_position(CANVAS_HEIGHT);
+  }
+  
 }
 
 function add_to_input_queue(command){
@@ -186,7 +205,6 @@ function add_to_input_queue(command){
   else{
     input_queue.push(command);
   }
-
 }
 
 function keydown(event) {
