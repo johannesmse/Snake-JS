@@ -2,10 +2,19 @@
 <canvas id="my_canvas"></canvas>
 
 <script>
+ 
+function random_int(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function random_grid_position(grid_size){
+  return SNAKE_SIZE * random_int(0, (grid_size / SNAKE_SIZE) - 1);
+}
+
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
 const SNAKE_SIZE = 20;
-const START_LENGTH = 10;
+const START_LENGTH = 4;
 const VALID_TURNS = {
   "up" : ["left", "right"],
   "down" : ["left", "right"],
@@ -19,13 +28,16 @@ canvas.height = CANVAS_HEIGHT;
 
 const ctx = canvas.getContext("2d");
 
+const food = [random_grid_position(CANVAS_WIDTH), random_grid_position(CANVAS_HEIGHT)];
 let direction = "right";
-let next_direction = ""
-let snake = [[200, 200]];
+let next_direction = "";
+let add_body_queue = 0;
+let snake = [[CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2]];
 
 function draw(){
   clear_screen();
   draw_snake();
+  draw_food();
 }
 
 function clear_screen(){
@@ -51,6 +63,11 @@ function draw_snake(){
   }
 }
 
+function draw_food(){
+  ctx.fillStyle = "blue";
+  ctx.fillRect(food[0], food[1], SNAKE_SIZE, SNAKE_SIZE); 
+}
+
 function initialize_body_parts(n){
   for (let i = 0; i < n; i++){
     const [last_x, last_y] = snake[snake.length - 1];
@@ -66,16 +83,14 @@ function update_game(){
   if (collision_check()){
     reset_snake();
   }
+  else if (food_check()){
+    add_body_queue ++;
+    respawn_food();
+  }
 }
 
-function move_snake(){
-  // Move body
-  for (let i = snake.length - 1; i > 0; i--){
-    snake[i][0] = snake[i - 1][0];
-    snake[i][1] = snake[i - 1][1];
-  }
 
-  // Move head
+function move_head(){
   if (VALID_TURNS[direction].includes(next_direction)){
     direction = next_direction;
   }
@@ -92,6 +107,25 @@ function move_snake(){
   else if (direction === "right"){
     snake[0][0] += SNAKE_SIZE;
   }
+}
+
+function move_body(){
+  for (let i = snake.length - 1; i > 0; i--){
+    snake[i][0] = snake[i - 1][0];
+    snake[i][1] = snake[i - 1][1];
+  }
+}
+
+function move_snake(){
+  if (add_body_queue > 0){
+    snake.unshift([...snake[0]]);
+    add_body_queue --;
+  }
+  else {
+    move_body();
+  }
+  
+  move_head();
 }
 
 function wrap_snake(){
@@ -123,10 +157,20 @@ function collision_check(){
   return false;
 }
 
+function food_check(){
+  return snake[0][0] === food[0] && snake[0][1] === food[1];
+}
+
 function reset_snake(){
-  snake = [[200, 200]];
+  snake = [[CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2]];
   direction = "right";
+  next_direction = "";
   initialize_body_parts(START_LENGTH);
+}
+
+function respawn_food(){
+  food[0] = random_grid_position(CANVAS_WIDTH);
+  food[1] = random_grid_position(CANVAS_HEIGHT);
 }
 
 function keydown(event) {
@@ -144,6 +188,8 @@ function keydown(event) {
     next_direction = "right";
   }
 }
+
+
 
 initialize_body_parts(START_LENGTH);
 setInterval(draw, 70);
