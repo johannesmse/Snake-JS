@@ -14,7 +14,7 @@ function random_grid_position(grid_size){
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 600;
 const SNAKE_SIZE = 20;
-const START_LENGTH = 4;
+const START_LENGTH = 10;
 const VALID_TURNS = {
   "up" : ["left", "right"],
   "down" : ["left", "right"],
@@ -29,8 +29,9 @@ canvas.height = CANVAS_HEIGHT;
 const ctx = canvas.getContext("2d");
 
 const food = [random_grid_position(CANVAS_WIDTH), random_grid_position(CANVAS_HEIGHT)];
+const input_queue = [];
+const input_queue_max_length = 2;
 let direction = "right";
-let next_direction = "";
 let add_body_queue = 0;
 let snake = [[CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2]];
 
@@ -84,17 +85,12 @@ function update_game(){
     reset_snake();
   }
   else if (food_check()){
-    add_body_queue ++;
+    add_body_queue += 1;
     respawn_food();
   }
 }
 
-
 function move_head(){
-  if (VALID_TURNS[direction].includes(next_direction)){
-    direction = next_direction;
-  }
-
   if (direction === "up"){
     snake[0][1] -= SNAKE_SIZE;
   }
@@ -117,6 +113,13 @@ function move_body(){
 }
 
 function move_snake(){
+  if (input_queue.length > 0 && input_queue[0] in VALID_TURNS){
+    if (VALID_TURNS[direction].includes(input_queue[0])){
+      direction = input_queue[0];
+    }
+    input_queue.shift();
+  }
+
   if (add_body_queue > 0){
     snake.unshift([...snake[0]]);
     add_body_queue --;
@@ -124,12 +127,12 @@ function move_snake(){
   else {
     move_body();
   }
-  
+
   move_head();
 }
 
+// Wrap around game window
 function wrap_snake(){
-  // Wrap around game window
   const [head_x, head_y] = snake[0];
 
   if (head_x < 0){
@@ -164,7 +167,7 @@ function food_check(){
 function reset_snake(){
   snake = [[CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2]];
   direction = "right";
-  next_direction = "";
+  input_queue.length = 0;
   initialize_body_parts(START_LENGTH);
 }
 
@@ -173,19 +176,32 @@ function respawn_food(){
   food[1] = random_grid_position(CANVAS_HEIGHT);
 }
 
+function add_to_input_queue(command){
+  if (input_queue.length === input_queue_max_length){
+    return;
+  }
+  else if (input_queue.length > 0 && input_queue[input_queue.length - 1] === command){
+    return;
+  }
+  else{
+    input_queue.push(command);
+  }
+
+}
+
 function keydown(event) {
   console.log(event);
   if (event.key === "w") {
-    next_direction = "up";
+    add_to_input_queue("up");
   }
   if (event.key === "s") {
-    next_direction = "down";
+    add_to_input_queue("down");
   }
   if (event.key === "a") {
-    next_direction = "left";
+    add_to_input_queue("left");
   }
   if (event.key === "d") {
-    next_direction = "right";
+    add_to_input_queue("right");
   }
 }
 
