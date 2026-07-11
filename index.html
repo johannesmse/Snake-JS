@@ -1,36 +1,46 @@
 <html style="background-color: black;">
-<canvas width=800 height=600 id="my_canvas">
-</canvas>
+<canvas id="my_canvas"></canvas>
+
 <script>
-const snake_size = 20
-let direction = "right"
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 600;
+const SNAKE_SIZE = 20;
+
+const canvas = document.getElementById("my_canvas");
+canvas.width = CANVAS_WIDTH;
+canvas.height = CANVAS_HEIGHT;
+
+const ctx = canvas.getContext("2d");
+
+let direction = "right";
 let snake = [[200, 200]];
 
 function draw(){
-  const canvas = document.getElementById("my_canvas");
-  const ctx = canvas.getContext("2d");
+  clear_screen();
+  draw_snake();
+}
 
-  ctx.beginPath(); 
-  ctx.rect(0, 0, 800, 600); 
-  ctx.fillStyle = "#ffffff";
-  ctx.fill(); 
+function clear_screen(){
+  ctx.fillStyle = "white";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
 
+
+function draw_snake(){
   // Draw snake head
-  ctx.beginPath(); 
-  ctx.rect(snake[0][0], snake[0][1], snake_size, snake_size); 
-  ctx.fillStyle = "#ff0000";
+  const [head_x, head_y] = snake[0];
+
+  ctx.fillStyle = "red";
   ctx.strokeStyle = "green";
-  ctx.fill(); 
-  ctx.stroke();
+  ctx.fillRect(head_x, head_y, SNAKE_SIZE, SNAKE_SIZE); 
+  ctx.strokeRect(head_x, head_y, SNAKE_SIZE, SNAKE_SIZE);
 
   // Draw snake body
+  ctx.fillStyle = "green";
   for (let i = 1; i < snake.length; i++){
-    let x_pos = snake[i][0];
-    let y_pos = snake[i][1];
-    ctx.beginPath();
-    ctx.rect(x_pos, y_pos, snake_size, snake_size); 
-    ctx.fillStyle = "green";
-    ctx.fill(); 
+    const [x, y] = snake[i];
+
+    ctx.fillRect(x, y, SNAKE_SIZE, SNAKE_SIZE); 
   }
 }
 
@@ -39,7 +49,7 @@ function initialize_body_parts(n){
     let last_element = snake.length - 1;
     let last_element_x = snake[last_element][0];
     let last_element_y = snake[last_element][1];
-    snake.push([last_element_x - snake_size, last_element_y]);
+    snake.push([last_element_x - SNAKE_SIZE, last_element_y]);
   }
 }
 
@@ -56,19 +66,18 @@ function move_snake(){
 
   // Move head
   if (direction === "up") {
-    snake[0][1] -= snake_size;
+    snake[0][1] -= SNAKE_SIZE;
   }
   else if (direction === "down") {
-    snake[0][1] += snake_size;
+    snake[0][1] += SNAKE_SIZE;
   }
   else if (direction === "left") {
-    snake[0][0] -= snake_size;
+    snake[0][0] -= SNAKE_SIZE;
   }
   else if (direction === "right") {
-    snake[0][0] += snake_size;
+    snake[0][0] += SNAKE_SIZE;
   }
 
-  
 }
 
 function keydown(event) {
