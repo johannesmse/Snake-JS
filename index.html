@@ -209,16 +209,16 @@ function add_to_input_queue(command){
 
 function keydown(event) {
   console.log(event);
-  if (event.key === "w") {
+  if (event.key === "w" || event.key === "ArrowUp") {
     add_to_input_queue("up");
   }
-  if (event.key === "s") {
+  if (event.key === "s" || event.key === "ArrowDown") {
     add_to_input_queue("down");
   }
-  if (event.key === "a") {
+  if (event.key === "a" || event.key === "ArrowLeft") {
     add_to_input_queue("left");
   }
-  if (event.key === "d") {
+  if (event.key === "d" || event.key === "ArrowRight") {
     add_to_input_queue("right");
   }
 }
