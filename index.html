@@ -25,7 +25,6 @@ function clear_screen(){
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
-
 function draw_snake(){
   // Draw snake head
   const [head_x, head_y] = snake[0];
@@ -46,10 +45,9 @@ function draw_snake(){
 
 function initialize_body_parts(n){
   for (let i = 0; i < n; i++){
-    let last_element = snake.length - 1;
-    let last_element_x = snake[last_element][0];
-    let last_element_y = snake[last_element][1];
-    snake.push([last_element_x - SNAKE_SIZE, last_element_y]);
+    const [last_x, last_y] = snake[snake.length - 1];
+
+    snake.push([last_x - SNAKE_SIZE, last_y]);
   }
 }
 
@@ -78,6 +76,21 @@ function move_snake(){
     snake[0][0] += SNAKE_SIZE;
   }
 
+  // Wrap around game window
+  const [head_x, head_y] = snake[0];
+
+  if (head_x < 0){
+    snake[0][0] = CANVAS_WIDTH - SNAKE_SIZE;
+  }
+  else if (head_x >= CANVAS_WIDTH){
+    snake[0][0] = 0;
+  }
+  else if (head_y < 0){
+    snake[0][1] = CANVAS_HEIGHT - SNAKE_SIZE;
+  }
+  else if (head_y >= CANVAS_HEIGHT){
+    snake[0][1] = 0;
+  }
 }
 
 function keydown(event) {
@@ -96,9 +109,9 @@ function keydown(event) {
   }
 }
 
-initialize_body_parts(4)
-setInterval(draw, 20);
-setInterval(update_game, 70);
+initialize_body_parts(10)
+setInterval(draw, 150);
+setInterval(update_game, 150);
 addEventListener("keydown", keydown);
 
 </script>
