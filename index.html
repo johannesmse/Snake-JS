@@ -45,7 +45,6 @@ let add_body_queue = 0;
 let snake = [[GAME_WINDOW_WIDTH / 2, GAME_WINDOW_HEIGHT / 2]];
 
 function draw(){
-  console.log(speed);
   clear_screen();
   draw_snake();
   draw_food();
@@ -65,8 +64,12 @@ function draw(){
 
 function clear_screen(){
   // Clear game window
-  ctx.fillStyle = "white";
+  ctx.fillStyle = "#202020";
   ctx.fillRect(0, 0, GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT);
+
+  // Clear menu padding
+  ctx.fillStyle = "black";
+  ctx.fillRect(GAME_WINDOW_WIDTH, 0, MENU_PADDING_X, GAME_WINDOW_HEIGHT);
   
   // Clear menu window
   ctx.fillStyle = "grey";
@@ -74,20 +77,39 @@ function clear_screen(){
 }
 
 function draw_snake(){
+  draw_snake_head();
+  draw_snake_body();
+}
+
+function draw_snake_head(){
   // Draw snake head
   const [head_x, head_y] = snake[0];
 
   ctx.fillStyle = "red";
-  ctx.strokeStyle = "green";
-  ctx.fillRect(head_x, head_y, SNAKE_SIZE, SNAKE_SIZE); 
-  ctx.strokeRect(head_x, head_y, SNAKE_SIZE, SNAKE_SIZE);
+  ctx.beginPath();
+  ctx.roundRect(head_x, head_y, SNAKE_SIZE, SNAKE_SIZE, 6);
+  ctx.fill();
 
+  // Draw eyes
+  ctx.fillStyle = "black";
+  ctx.beginPath();
+  ctx.arc(head_x + 6, head_y + 6, 2, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.arc(head_x + 14, head_y + 6, 2, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function draw_snake_body(){
   // Draw snake body
-  ctx.fillStyle = "green";
+  ctx.fillStyle = "#7CFC00";
   for (let i = 1; i < snake.length; i++){
     const [x, y] = snake[i];
 
-    ctx.fillRect(x, y, SNAKE_SIZE, SNAKE_SIZE); 
+    ctx.beginPath();
+    ctx.roundRect(x, y, SNAKE_SIZE, SNAKE_SIZE, 4);
+    ctx.fill();
   }
 }
 
@@ -106,11 +128,19 @@ function draw_score(){
 }
 
 function draw_food(){
-  ctx.fillStyle = "blue";
-  ctx.fillRect(food[0][0], food[0][1], SNAKE_SIZE, SNAKE_SIZE); 
+  // Draw blue food
+  ctx.fillStyle = "rgb(0, 0, 255)";
+  let [food_x, food_y] = food[0];
+  ctx.beginPath();
+  ctx.arc(food_x + SNAKE_SIZE / 2, food_y + SNAKE_SIZE / 2, SNAKE_SIZE / 2, 0, Math.PI * 2);
+  ctx.fill();
 
-  ctx.fillStyle = "purple";
-  ctx.fillRect(food[1][0], food[1][1], SNAKE_SIZE, SNAKE_SIZE); 
+  // Draw purple food
+  ctx.fillStyle = "rgb(255, 0, 255)";
+  [food_x, food_y] = food[1];
+  ctx.beginPath();
+  ctx.arc(food_x + SNAKE_SIZE / 2, food_y + SNAKE_SIZE / 2, SNAKE_SIZE / 2, 0, Math.PI * 2);
+  ctx.fill();
 }
 
 function initialize_body_parts(n){
@@ -223,8 +253,6 @@ function reset_snake(){
   direction = "right";
   input_queue.length = 0;
   initialize_body_parts(START_LENGTH);
-  
-  
 }
 
 function restart_game(){
@@ -233,7 +261,6 @@ function restart_game(){
   reset_speed();
   respawn_food(1);
   respawn_food(3);
-
 }
 
 function reset_score(){
@@ -259,7 +286,6 @@ function respawn_food(food_value){
     food[1][0] = random_grid_position(GAME_WINDOW_WIDTH);
     food[1][1] = random_grid_position(GAME_WINDOW_HEIGHT);
   }
-  
 }
 
 function add_to_input_queue(command){
