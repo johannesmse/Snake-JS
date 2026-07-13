@@ -52,7 +52,7 @@ function draw(){
   draw_score();
 
 
-  if (speed_increase_counter == 20){
+  if (speed_increase_counter == 60){
     speed -= 1;
     speed_increase_counter = 0;
     clearInterval(game_interval);
@@ -293,7 +293,7 @@ function keydown(event) {
 
 
 initialize_body_parts(START_LENGTH);
-setInterval(draw, 70);
+setInterval(draw, 20);
 let game_interval = setInterval(update_game, speed);
 addEventListener("keydown", keydown);
 
