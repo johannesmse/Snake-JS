@@ -114,17 +114,15 @@ function draw_snake_body(){
 }
 
 function draw_score(){
+  
+  ctx.font = "40px Arial";
+  ctx.fillStyle = "black";
+  ctx.textAlign = "center";
+
   // Draw current score
-  ctx.font = "40px Arial";
-  ctx.fillStyle = "black";
-  ctx.fillText("Score: " + current_score, MENU_START_X + MENU_WIDTH / 3.5, 200);
-
+  ctx.fillText("Score: " + current_score, MENU_START_X + MENU_WIDTH / 2, 200);
   // Draw Highscore
-  ctx.font = "40px Arial";
-  ctx.fillStyle = "black";
-  ctx.fillText("Highscore: " + highscore, MENU_START_X + MENU_WIDTH / 5.5, 300);
-
-
+  ctx.fillText("Highscore: " + highscore, MENU_START_X + MENU_WIDTH / 2, 300);
 }
 
 function draw_food(){
