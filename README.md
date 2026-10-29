@@ -1,3 +1,5 @@
+This is a small project, and the purpose of this project was to get familiar with JavaScript.
+
 https://johannes.oleherman.com
 
 ## Run offline / locally
